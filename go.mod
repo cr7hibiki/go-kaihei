@@ -1,0 +1,1 @@
+module "github.com/drscorpio/go-kaihei"
