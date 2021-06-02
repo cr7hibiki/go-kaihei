@@ -1,4 +1,4 @@
-package object
+package go_kaihei
 
 type Guild struct {
 	ID               string    `json:"id"`

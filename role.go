@@ -1,4 +1,4 @@
-package object
+package go_kaihei
 
 type Role struct {
 	RoleID      int    `json:"role_id"`
