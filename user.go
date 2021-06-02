@@ -1,5 +1,10 @@
 package go_kaihei
 
+var (
+	userUrl = BaseApiUrl + "/user"
+	meUrl   = userUrl + "/me"
+)
+
 type User struct {
 	ID             string `json:"id"`
 	UserName       string `json:"username"`

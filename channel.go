@@ -1,5 +1,19 @@
 package go_kaihei
 
+var (
+	channelUrl           = BaseApiUrl + "/channel"
+	channelRoleUrl       = BaseApiUrl + "/channel-role"
+	listChannelUrl       = channelUrl + "/list"
+	viewChannelUrl       = channelUrl + "/view"
+	createChannelUrl     = channelUrl + "/create"
+	deleteChannelUrl     = channelUrl + "/delete"
+	moveUserChannelUrl   = channelUrl + "/move-user"
+	indexChannelRoleUrl  = channelRoleUrl + "/index"
+	createChannelRoleUrl = channelRoleUrl + "/create"
+	updateChannelRoleUrl = channelRoleUrl + "/update"
+	deleteChannelRoleUrl = channelRoleUrl + "/delete"
+)
+
 type Channel struct {
 	ID                   string        `json:"id"`
 	Name                 string        `json:"name"`

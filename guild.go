@@ -1,5 +1,19 @@
 package go_kaihei
 
+var (
+	guildUrl           = BaseApiUrl + "/guild"
+	muteGuildUrl       = BaseApiUrl + "/guild-mute"
+	listGuildUrl       = guildUrl + "/list"
+	viewGuildUrl       = guildUrl + "/view"
+	userListGuildUrl   = guildUrl + "/user-list"
+	nicknameGuildUrl   = guildUrl + "/nickname"
+	leaveGuildUrl      = guildUrl + "/leave"
+	kickoutGuildUrl    = guildUrl + "/kickout"
+	muteListGuildUrl   = muteGuildUrl + "/list"
+	muteCreateGuildUrl = muteGuildUrl + "/create"
+	muteDeleteGuildUrl = muteGuildUrl + "/delete"
+)
+
 type Guild struct {
 	ID               string    `json:"id"`
 	Name             string    `json:"name"`

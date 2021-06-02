@@ -4,9 +4,9 @@ package go_kaihei
 type TokenType = string
 
 const (
-	//BASE_API_URL API base URL
-	BASE_API_URL = "https://www.kaiheila.cn/api"
+	//BaseApiUrl API base URL
+	BaseApiUrl = "https://www.kaiheila.cn/api/v3"
 
-	TOKEN_TYPE_BOT    = TokenType("Bot")
-	TOKEN_TYPE_OAUTH2 = TokenType("Bearer")
+	TokenTypeBot    = TokenType("Bot")
+	TokenTypeOauth2 = TokenType("Bearer")
 )
