@@ -2,6 +2,7 @@ package go_kaihei
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 var (
@@ -12,7 +13,7 @@ var (
 	userListGuildUrl   = guildUrl + "/user-list"
 	nicknameGuildUrl   = guildUrl + "/nickname"
 	leaveGuildUrl      = guildUrl + "/leave"
-	kickoutGuildUrl    = guildUrl + "/kickout"
+	kickOutGuildUrl    = guildUrl + "/kickout"
 	muteListGuildUrl   = muteGuildUrl + "/list"
 	muteCreateGuildUrl = muteGuildUrl + "/create"
 	muteDeleteGuildUrl = muteGuildUrl + "/delete"
@@ -139,8 +140,159 @@ func (c Client) ListGuildUsers(queryParams map[string]string) (users []User, use
 	return
 }
 
-//ChangeNickName
-//
-func (c *Client) ChangeNickName() {
+//ChangeGuildNickName
+//change nickname in specified Guild
+//params should be ordered like ChangeGuildNickName(guildID,nickname,user_id)
+//param nickname and user_id can be empty
+//if nickname is empty the nickname will be cleaned
+//if user_id is empty the target user will be bot
+func (c *Client) ChangeGuildNickName(guildID string, params ...string) error {
+	if len(params) > 2 {
+		return errors.New("params error : params must less than 2")
+	}
+	data := map[string]interface{}{}
+	data["guild_id"] = guildID
+	if len(params) == 1 {
+		data["nickname"] = params[0]
+	}
+	if len(params) == 2 {
+		data["nickname"] = params[0]
+		data["user_id"] = params[1]
+	}
+	res, err := c.post(nicknameGuildUrl, data)
+	if err != nil {
+		return err
+	}
+	tempData := &Status{}
+	err = json.Unmarshal(res.Body(), tempData)
+	if err != nil {
+		return err
+	}
+	if checkResponse(tempData) != nil {
+		return checkResponse(tempData)
+	}
+	return nil
+}
 
+//LeaveGuild
+func (c *Client) LeaveGuild(guildID string) error {
+	data := map[string]interface{}{
+		"guild_id": guildID,
+	}
+	res, err := c.post(leaveGuildUrl, data)
+	if err != nil {
+		return err
+	}
+	tempData := &Status{}
+	err = json.Unmarshal(res.Body(), tempData)
+	if err != nil {
+		return err
+	}
+	if checkResponse(tempData) != nil {
+		return checkResponse(tempData)
+	}
+	return nil
+}
+
+//KickOutGuildUser
+//
+func (c *Client) KickOutGuildUser(guildID string, target_id string) error {
+	data := map[string]interface{}{
+		"guild_id":  guildID,
+		"target_id": target_id,
+	}
+	res, err := c.post(kickOutGuildUrl, data)
+	if err != nil {
+		return err
+	}
+	tempData := &Status{}
+	err = json.Unmarshal(res.Body(), tempData)
+	if err != nil {
+		return err
+	}
+	if checkResponse(tempData) != nil {
+		return checkResponse(tempData)
+	}
+	return nil
+}
+
+//ListGuildMute
+func (c *Client) ListGuildMute(guildID string, return_type ...string) (mic []string, headset []string, err error) {
+	data := map[string]string{
+		"guild_id": guildID,
+	}
+	if len(return_type) > 1 {
+		err = errors.New("params error : params must less than 2")
+		return nil, nil, err
+	}
+	if len(return_type) == 1 {
+		data["return_type"] = return_type[0]
+	}
+	res, err := c.getWithParams(listGuildUrl, data)
+	if err != nil {
+		return nil, nil, err
+	}
+	var tempData struct {
+		*Status
+		Data struct {
+			Mic struct {
+				Type    int      `json:"type"`
+				Mic_IDs []string `json:"user_ids"`
+			} `json:"mic"`
+			Headset struct {
+				Type        int      `json:"type"`
+				Headset_IDs []string `json:"user_ids"`
+			} `json:"headset"`
+		} `json:"data"`
+	}
+	err = json.Unmarshal(res.Body(), &tempData)
+	if err != nil {
+		return nil, nil, err
+	}
+	mic = tempData.Data.Mic.Mic_IDs
+	headset = tempData.Data.Headset.Headset_IDs
+	return
+}
+
+//CreateGuildMute
+func (c *Client) CreateGuildMute(guildID string, user_id string, Type string) error {
+	data := map[string]interface{}{
+		"guild_id": guildID,
+		"user_id":  user_id,
+		"type":     Type,
+	}
+	res, err := c.post(muteCreateGuildUrl, data)
+	if err != nil {
+		return err
+	}
+	tempData := &Status{}
+	err = json.Unmarshal(res.Body(), tempData)
+	if err != nil {
+		return err
+	}
+	if checkResponse(tempData) != nil {
+		return checkResponse(tempData)
+	}
+	return nil
+}
+
+func (c *Client) DeleteGuildMute(guildID string, user_id string, Type string) error {
+	data := map[string]interface{}{
+		"guild_id": guildID,
+		"user_id":  user_id,
+		"type":     Type,
+	}
+	res, err := c.post(muteDeleteGuildUrl, data)
+	if err != nil {
+		return err
+	}
+	tempData := &Status{}
+	err = json.Unmarshal(res.Body(), tempData)
+	if err != nil {
+		return err
+	}
+	if checkResponse(tempData) != nil {
+		return checkResponse(tempData)
+	}
+	return nil
 }
