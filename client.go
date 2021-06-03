@@ -15,6 +15,7 @@ type Client struct {
 }
 
 //NewClient
+//Create a new Client with specified TokenType and your own Token
 func NewClient(tockenType TokenType, tocken string) *Client {
 	c := resty.New()
 	c.SetHeader("Content-Type", "application/json")
@@ -34,10 +35,13 @@ func (c *Client) getWithParam(url string, key string, value string) (*resty.Resp
 	return c.client.R().SetQueryParam(key, value).Get(url)
 }
 
-func (c Client) getWithParams(url string, queryParams map[string]string) (*resty.Response, error) {
+func (c *Client) getWithParams(url string, queryParams map[string]string) (*resty.Response, error) {
 	return c.client.R().SetQueryParams(queryParams).Get(url)
 }
 
+func (c *Client) post(url string, body interface{}) (*resty.Response, error) {
+	return c.client.R().SetBody(body).Post(url)
+}
 func checkResponse(status *Status) error {
 	if status.Code != 0 {
 		return errors.New(fmt.Sprintf("Error code %d : %s", status.Code, status.Msg))

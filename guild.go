@@ -68,7 +68,7 @@ func (c *Client) ListGuilds() ([]Guild, error) {
 }
 
 //ViewGuild
-//Get Details of Specified Guild by guild_id
+//Get Details of Guild Specified by guild_id
 func (c *Client) ViewGuild(guildID string) (*Guild, error) {
 	res, err := c.getWithParam(viewGuildUrl, "guild_id", guildID)
 	if err != nil {
@@ -97,19 +97,20 @@ func (c *Client) ViewGuild(guildID string) (*Guild, error) {
 	return tempData.Data.Guild, nil
 }
 
-//ListGuildUsers returns user count , online user count , offline user count ,
-//and an array of user these are matched with queryParams
+//ListGuildUsers
+//returns user count , online user count , offline user count ,
+//and an array of User these are matched with queryParams
 // queryParams:
-// | ParamName       |   Type  | IsNecessary   | explain
-// | guild_id        | string  |     T       |  the id of specified guild
-// | channel_id      | string  |     F       |  the id of specified channel
-// | search 		 | string  |     F       |  query key word , will search in uer name and nickname
-// | role_id		 |  int    |     F       |  query users by role
-// | mobile_verified |  int    |     F       |	should be "0" or "1" ,"0" is unverified ,"1" is verified
-// | active_time	 |  int    |     F       |	sort by active time "0" is order "1" is reverse order
-// | joined_at       |  int    |     F       |  sort by join time "0" is order "1" is reverse order
-// | page			 |  int    |     F       |  target page number
-// | page_size		 |  int    |     F       |  page size
+// | ParamName       |   Type  | IsNecessary | explain
+// | guild_id        | string  |      T      |  the id of specified guild
+// | channel_id      | string  |      F      |  the id of specified channel
+// | search 		 | string  |      F      |  query key word , will search in uer name and nickname
+// | role_id		 |  int    |      F      |  query users by role
+// | mobile_verified |  int    |      F      |	should be "0" or "1" ,"0" is unverified ,"1" is verified
+// | active_time	 |  int    |      F      |	sort by active time "0" is order "1" is reverse order
+// | joined_at       |  int    |      F      |  sort by join time "0" is order "1" is reverse order
+// | page			 |  int    |      F      |  target page number
+// | page_size		 |  int    |      F      |  page size
 func (c Client) ListGuildUsers(queryParams map[string]string) (users []User, userCount int, userOnline int, userOffline int, err error) {
 	res, err := c.getWithParams(userListGuildUrl, queryParams)
 	if err != nil {
@@ -138,6 +139,8 @@ func (c Client) ListGuildUsers(queryParams map[string]string) (users []User, use
 	return
 }
 
+//ChangeNickName
+//
 func (c *Client) ChangeNickName() {
 
 }
