@@ -9,21 +9,21 @@ import (
 //Client a basic Kaiheila API client.
 //Use NewClient method to create a new client.
 type Client struct {
-	tocken     string
-	tockenType TokenType
-	client     *resty.Client
+	token     string
+	tokenType TokenType
+	client    *resty.Client
 }
 
 //NewClient
 //Create a new Client with specified TokenType and your own Token
-func NewClient(tockenType TokenType, tocken string) *Client {
+func NewClient(tokenType TokenType, token string) *Client {
 	c := resty.New()
 	c.SetHeader("Content-Type", "application/json")
-	c.SetAuthToken(fmt.Sprintf("%s %s", tockenType, tocken))
+	c.SetAuthToken(fmt.Sprintf("%s %s", tokenType, token))
 	return &Client{
-		client:     c,
-		tocken:     tocken,
-		tockenType: tockenType,
+		client:    c,
+		token:     token,
+		tokenType: tokenType,
 	}
 }
 

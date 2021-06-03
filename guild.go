@@ -175,6 +175,7 @@ func (c *Client) ChangeGuildNickName(guildID string, params ...string) error {
 }
 
 //LeaveGuild
+//return nil if leave guild success
 func (c *Client) LeaveGuild(guildID string) error {
 	data := map[string]interface{}{
 		"guild_id": guildID,
@@ -195,11 +196,11 @@ func (c *Client) LeaveGuild(guildID string) error {
 }
 
 //KickOutGuildUser
-//
-func (c *Client) KickOutGuildUser(guildID string, target_id string) error {
+//return nil if leave kick out success
+func (c *Client) KickOutGuildUser(guildID string, targetId string) error {
 	data := map[string]interface{}{
 		"guild_id":  guildID,
-		"target_id": target_id,
+		"target_id": targetId,
 	}
 	res, err := c.post(kickOutGuildUrl, data)
 	if err != nil {
@@ -217,18 +218,13 @@ func (c *Client) KickOutGuildUser(guildID string, target_id string) error {
 }
 
 //ListGuildMute
-func (c *Client) ListGuildMute(guildID string, return_type ...string) (mic []string, headset []string, err error) {
+//return muted mic and headset user's id array
+func (c *Client) ListGuildMute(guildID string) (mic []string, headset []string, err error) {
 	data := map[string]string{
-		"guild_id": guildID,
+		"guild_id":    guildID,
+		"return_type": "detail",
 	}
-	if len(return_type) > 1 {
-		err = errors.New("params error : params must less than 2")
-		return nil, nil, err
-	}
-	if len(return_type) == 1 {
-		data["return_type"] = return_type[0]
-	}
-	res, err := c.getWithParams(listGuildUrl, data)
+	res, err := c.getWithParams(muteListGuildUrl, data)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -236,12 +232,12 @@ func (c *Client) ListGuildMute(guildID string, return_type ...string) (mic []str
 		*Status
 		Data struct {
 			Mic struct {
-				Type    int      `json:"type"`
-				Mic_IDs []string `json:"user_ids"`
+				Type   int      `json:"type"`
+				MicIds []string `json:"user_ids"`
 			} `json:"mic"`
 			Headset struct {
-				Type        int      `json:"type"`
-				Headset_IDs []string `json:"user_ids"`
+				Type       int      `json:"type"`
+				HeadsetIds []string `json:"user_ids"`
 			} `json:"headset"`
 		} `json:"data"`
 	}
@@ -249,16 +245,18 @@ func (c *Client) ListGuildMute(guildID string, return_type ...string) (mic []str
 	if err != nil {
 		return nil, nil, err
 	}
-	mic = tempData.Data.Mic.Mic_IDs
-	headset = tempData.Data.Headset.Headset_IDs
+	mic = tempData.Data.Mic.MicIds
+	headset = tempData.Data.Headset.HeadsetIds
 	return
 }
 
 //CreateGuildMute
-func (c *Client) CreateGuildMute(guildID string, user_id string, Type string) error {
+//set guild specified user muted
+//type "1" is mute mic , "2" is mute headset
+func (c *Client) CreateGuildMute(guildID string, userId string, Type string) error {
 	data := map[string]interface{}{
 		"guild_id": guildID,
-		"user_id":  user_id,
+		"user_id":  userId,
 		"type":     Type,
 	}
 	res, err := c.post(muteCreateGuildUrl, data)
@@ -276,10 +274,13 @@ func (c *Client) CreateGuildMute(guildID string, user_id string, Type string) er
 	return nil
 }
 
-func (c *Client) DeleteGuildMute(guildID string, user_id string, Type string) error {
+//DeleteGuildMute
+//delete guild specified user muted
+//type "1" is delete mute mic , "2" is delete mute headset
+func (c *Client) DeleteGuildMute(guildID string, userId string, Type string) error {
 	data := map[string]interface{}{
 		"guild_id": guildID,
-		"user_id":  user_id,
+		"user_id":  userId,
 		"type":     Type,
 	}
 	res, err := c.post(muteDeleteGuildUrl, data)
