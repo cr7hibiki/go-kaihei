@@ -19,7 +19,7 @@ type Client struct {
 func NewClient(tokenType TokenType, token string) *Client {
 	c := resty.New()
 	c.SetHeader("Content-Type", "application/json")
-	c.SetAuthToken(fmt.Sprintf("%s %s", tokenType, token))
+	c.SetHeader("Authorization", fmt.Sprintf("%s %s", tokenType, token))
 	return &Client{
 		client:    c,
 		token:     token,
@@ -42,6 +42,11 @@ func (c *Client) getWithParams(url string, queryParams map[string]string) (*rest
 func (c *Client) post(url string, body interface{}) (*resty.Response, error) {
 	return c.client.R().SetBody(body).Post(url)
 }
+
+func (c *Client) PostFile(url string, param string, path string) (*resty.Response, error) {
+	return c.client.R().SetFile(param, path).Post(url)
+}
+
 func checkResponse(status *Status) error {
 	if status.Code != 0 {
 		return errors.New(fmt.Sprintf("Error code %d : %s", status.Code, status.Msg))

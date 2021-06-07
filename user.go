@@ -1,5 +1,7 @@
 package go_kaihei
 
+import "encoding/json"
+
 var (
 	userUrl = BaseApiUrl + "/user"
 	meUrl   = userUrl + "/me"
@@ -20,4 +22,23 @@ type User struct {
 	InviteCount    int    `json:"invite_count"`
 	NickName       string `json:"nickname"`
 	Roles          []Role `json:"roles"`
+}
+
+func (c *Client) GetMe() (*User, error) {
+	res, err := c.get(meUrl)
+	if err != nil {
+		return nil, err
+	}
+	var tempData struct {
+		*Status
+		Data User
+	}
+	err = json.Unmarshal(res.Body(), &tempData)
+	if err != nil {
+		return nil, err
+	}
+	if checkResponse(tempData.Status) != nil {
+		return nil, checkResponse(tempData.Status)
+	}
+	return &tempData.Data, nil
 }
